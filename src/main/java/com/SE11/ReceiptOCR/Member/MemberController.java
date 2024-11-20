@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
@@ -14,6 +15,7 @@ public class MemberController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
+    @ResponseBody
     public String addMember(String user_id,
                             String name,
                             String email,
