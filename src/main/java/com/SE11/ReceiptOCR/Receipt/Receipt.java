@@ -1,7 +1,7 @@
 package com.SE11.ReceiptOCR.Receipt;
 
-import jakarta.persistence.*;
 import com.SE11.ReceiptOCR.Member.Member;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,10 +23,10 @@ public class Receipt {
     private int totalAmount; // 물품 수량
 
     @Column(name = "date", nullable = false)
-    private LocalDate date; // 날짜 (LocalDate 사용)
+    private LocalDate date; // 날짜
 
     @Column(name = "image_url", length = 512)
-    private String imageUrl; // 이미지 주소 (URL 길이 늘림)
+    private String imageUrl; // 이미지 주소
 
     @ManyToOne(fetch = FetchType.LAZY) // Member와 연관 관계 설정
     @JoinColumn(name = "user_id", nullable = false) // 외래 키
