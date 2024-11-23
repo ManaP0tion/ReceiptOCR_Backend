@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 
 @Controller
 @RequiredArgsConstructor
@@ -16,19 +16,17 @@ public class MemberController {
 
     @PostMapping("/register")
     @ResponseBody
-    public String addMember(String user_id,
-                            String name,
-                            String email,
-                            String password) {
+    public String addMember(@RequestBody MemberDTO memberDTO) {
+        // DTO -> 엔티티 변환
         Member member = new Member();
-        member.setUser_id(user_id);
-        member.setName(name);
-        member.setEmail(email);
-        var hash = passwordEncoder.encode(password);
-        member.setPassword(hash);
+        member.setUser_id(memberDTO.getUserId());
+        member.setName(memberDTO.getName());
+        member.setEmail(memberDTO.getEmail());
+        member.setPassword(passwordEncoder.encode(memberDTO.getPassword())); // 패스워드 해싱
 
+        // 엔티티 저장
         memberRepository.save(member);
 
-        return "ok";        // dummy
+        return "Member signup Success"; // dummy
     }
 }
