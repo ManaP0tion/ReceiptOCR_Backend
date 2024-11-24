@@ -2,12 +2,12 @@ package com.SE11.ReceiptOCR.Member;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/members") // 공통 URL Prefix
 public class MemberController {
@@ -21,8 +21,7 @@ public class MemberController {
      * @return 성공 메시지
      */
     @PostMapping("/register")
-    @ResponseBody
-    public String addMember(@RequestBody MemberDTO memberDTO) {
+    public ResponseEntity<String> addMember(@RequestBody MemberDTO memberDTO) {
         // DTO -> 엔티티 변환
         Member member = new Member();
         member.setUser_id(memberDTO.getUserId());
@@ -33,7 +32,7 @@ public class MemberController {
         // 엔티티 저장
         memberRepository.save(member);
 
-        return "Member signup Success";
+        return ResponseEntity.ok("Member signup Success");
     }
 
     /**
@@ -42,13 +41,12 @@ public class MemberController {
      * @return 회원 정보
      */
     @GetMapping("/{userId}")
-    @ResponseBody
-    public Member getMember(@PathVariable String userId) {
+    public ResponseEntity<Member> getMember(@PathVariable String userId) {
         Optional<Member> member = memberRepository.findById(userId);
         if (member.isPresent()) {
-            return member.get();
+            return ResponseEntity.ok(member.get());
         } else {
-            throw new IllegalArgumentException("Member not found");
+            return ResponseEntity.status(404).body(null); // 404 NOT FOUND 응답
         }
     }
 
@@ -57,24 +55,24 @@ public class MemberController {
      * @return 모든 회원 리스트
      */
     @GetMapping("/all")
-    @ResponseBody
-    public Iterable<Member> getAllMembers() {
-        return memberRepository.findAll();
+    public ResponseEntity<Iterable<Member>> getAllMembers() {
+        return ResponseEntity.ok(memberRepository.findAll());
     }
 
     /**
-     @param userId 업데이트할 회원 ID
-     @return 성공메시지
+     * 회원 수정
+     * @param userId 업데이트할 회원 ID
+     * @param memberDTO 업데이트할 데이터
+     * @return 성공 메시지
      */
-    @PutMapping
-    @ResponseBody
-    public String updateMember(String userId, @RequestBody MemberDTO memberDTO) {
+    @PutMapping("/{userId}")
+    public ResponseEntity<String> updateMember(@PathVariable String userId, @RequestBody MemberDTO memberDTO) {
         Optional<Member> member = memberRepository.findById(userId);
 
-        if(member.isPresent()) {
+        if (member.isPresent()) {
             Member existingMember = member.get();
 
-            if(memberDTO.getName() != null){
+            if (memberDTO.getName() != null) {
                 existingMember.setName(memberDTO.getName());
             }
             if (memberDTO.getEmail() != null) {
@@ -83,14 +81,13 @@ public class MemberController {
             if (memberDTO.getPassword() != null) {
                 existingMember.setPassword(passwordEncoder.encode(memberDTO.getPassword())); // 패스워드 해싱
             }
+
             memberRepository.save(existingMember);
-            return "Member updated Successfully";
-        }
-        else {
-            throw new IllegalArgumentException("Member not found");
+            return ResponseEntity.ok("Member updated successfully");
+        } else {
+            return ResponseEntity.status(404).body("Member not found");
         }
     }
-
 
     /**
      * 회원 삭제
@@ -98,9 +95,12 @@ public class MemberController {
      * @return 성공 메시지
      */
     @DeleteMapping("/{userId}")
-    @ResponseBody
-    public String deleteMember(@PathVariable String userId) {
-        memberRepository.deleteById(userId);
-        return "Member deleted successfully";
+    public ResponseEntity<String> deleteMember(@PathVariable String userId) {
+        if (memberRepository.existsById(userId)) {
+            memberRepository.deleteById(userId);
+            return ResponseEntity.ok("Member deleted successfully");
+        } else {
+            return ResponseEntity.status(404).body("Member not found");
+        }
     }
 }
