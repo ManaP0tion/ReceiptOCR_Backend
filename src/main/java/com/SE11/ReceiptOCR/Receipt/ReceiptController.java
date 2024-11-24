@@ -73,4 +73,47 @@ public class ReceiptController {
 
         return ResponseEntity.ok(receiptDTOs);
     }
+
+    // 영수증 업데이트
+    @PutMapping("/{receiptId}")
+    public ResponseEntity<String> updateReceipt(@PathVariable String receiptId,
+                                                @RequestBody ReceiptDTO receiptDTO) {
+        Receipt existingReceipt = receiptRepository.findById(receiptId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "영수증을 찾을 수 없습니다: " + receiptId));
+
+        // 업데이트 가능한 필드만 수정
+        if (receiptDTO.getStoreName() != null) {
+            existingReceipt.setStoreName(receiptDTO.getStoreName());
+        }
+        if (receiptDTO.getTotalAmount() != 0) {
+            existingReceipt.setTotalAmount(receiptDTO.getTotalAmount());
+        }
+        if (receiptDTO.getDate() != null) {
+            existingReceipt.setDate(receiptDTO.getDate());
+        }
+        if (receiptDTO.getUserId() != null) {
+            Member member = memberRepository.findById(receiptDTO.getUserId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with ID: " + receiptDTO.getUserId()));
+            existingReceipt.setMember(member);
+        }
+
+        receiptRepository.save(existingReceipt);
+        return ResponseEntity.ok("영수증이 성공적으로 수정되었습니다.");
+    }
+
+
+
+
+    // 영수증 삭제
+    @DeleteMapping("/{receiptId}")
+    public ResponseEntity<String> deleteReceipt(@PathVariable String receiptId) {
+        if(!receiptRepository.existsById(receiptId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Receipt not found with ID: " + receiptId);
+        }
+        receiptRepository.deleteById(receiptId);
+        return ResponseEntity.ok("Receipt Deleted Successfully!");
+    }
+
+
+
 }
