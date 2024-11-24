@@ -38,7 +38,7 @@ public class ReceiptController {
         Member member = memberRepository.findById(receiptDTO.getUserId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with ID: " + receiptDTO.getUserId()));
 
-        receipt.setUser(member);
+        receipt.setMember(member);
         receiptRepository.save(receipt);
         return ResponseEntity.ok("영수증이 성공적으로 생성되었습니다!");
     }
@@ -53,7 +53,7 @@ public class ReceiptController {
                 receipt.getStoreName(),
                 receipt.getTotalAmount(),
                 receipt.getDate(),
-                receipt.getUser().getUser_id() // 수정: getUserId() -> getUser_id()
+                receipt.getMember().getUser_id() // 수정: getUserId() -> getUser_id()
         );
         return ResponseEntity.ok(receiptDTO);
     }
@@ -67,7 +67,7 @@ public class ReceiptController {
                         receipt.getStoreName(),
                         receipt.getTotalAmount(),
                         receipt.getDate(),
-                        receipt.getUser().getUser_id() // 수정: getUserId() -> getUser_id()
+                        receipt.getMember().getUser_id() // 수정: getUserId() -> getUser_id()
                 ))
                 .collect(Collectors.toList());
 

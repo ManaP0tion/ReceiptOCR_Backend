@@ -28,7 +28,7 @@ public class Receipt {
     @Column(name = "image_url", length = 512)
     private String imageUrl; // 이미지 주소
 
-    @ManyToOne(fetch = FetchType.LAZY) // Member와 연관 관계 설정
+    @ManyToOne // Member와 연관 관계 설정
     @JoinColumn(name = "user_id", nullable = false) // 외래 키
-    private Member user; // 유저 엔티티와의 관계
+    private Member member; // 유저 엔티티와의 관계
 }
