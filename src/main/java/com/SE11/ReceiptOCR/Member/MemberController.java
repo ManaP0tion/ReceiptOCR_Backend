@@ -63,6 +63,38 @@ public class MemberController {
     }
 
     /**
+     @param userId 업데이트할 회원 ID
+     @return 성공메시지
+     */
+    @PutMapping
+    @ResponseBody
+    public String updateMember(String userId, @RequestBody MemberDTO memberDTO) {
+        Optional<Member> member = memberRepository.findById(userId);
+
+        if(member.isPresent()) {
+            Member existingMember = member.get();
+
+            if(memberDTO.getName() != null){
+                existingMember.setName(memberDTO.getName());
+            }
+            if (memberDTO.getEmail() != null) {
+                existingMember.setEmail(memberDTO.getEmail());
+            }
+            if (memberDTO.getPassword() != null) {
+                existingMember.setPassword(passwordEncoder.encode(memberDTO.getPassword())); // 패스워드 해싱
+            }
+            memberRepository.save(existingMember);
+            return "Member updated Successfully";
+        }
+        else {
+            throw new IllegalArgumentException("Member not found");
+        }
+    }
+
+
+
+
+    /**
      * 회원 삭제
      * @param userId 삭제할 회원 ID
      * @return 성공 메시지
