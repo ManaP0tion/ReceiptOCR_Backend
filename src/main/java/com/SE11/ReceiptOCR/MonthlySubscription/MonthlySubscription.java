@@ -1,10 +1,7 @@
 package com.SE11.ReceiptOCR.MonthlySubscription;
 
 import com.SE11.ReceiptOCR.Member.Member;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +10,7 @@ import lombok.Setter;
 @Getter
 public class MonthlySubscription {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int subscription_id; // 구독 ID
 
     private String subscription_item; // 구독 항목

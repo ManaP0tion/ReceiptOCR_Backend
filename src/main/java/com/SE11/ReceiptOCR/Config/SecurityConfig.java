@@ -1,4 +1,4 @@
-package com.SE11.ReceiptOCR;
+package com.SE11.ReceiptOCR.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
