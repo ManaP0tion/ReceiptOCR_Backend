@@ -1,5 +1,6 @@
 package com.SE11.ReceiptOCR.Member;
 
+import com.SE11.ReceiptOCR.Config.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +15,15 @@ public class MemberController {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
-     * 회원 등록
+     * 회원 등록 및 토큰 발급
      * @param memberDTO 요청 바디로 전달된 회원 데이터
-     * @return 성공 메시지
+     * @return JWT 토큰
      */
     @PostMapping("/register")
-    public ResponseEntity<String> addMember(@RequestBody MemberDTO memberDTO) {
+    public ResponseEntity<String> register(@RequestBody MemberDTO memberDTO) {
         // DTO -> 엔티티 변환
         Member member = new Member();
         member.setUser_id(memberDTO.getUserId());
@@ -29,11 +31,40 @@ public class MemberController {
         member.setEmail(memberDTO.getEmail());
         member.setPassword(passwordEncoder.encode(memberDTO.getPassword())); // 패스워드 해싱
 
+        // 중복 체크
+        if (memberRepository.existsById(memberDTO.getUserId())) {
+            return ResponseEntity.status(409).body("User ID already exists");
+        }
+
         // 엔티티 저장
         memberRepository.save(member);
 
-        return ResponseEntity.ok("Member signup Success");
+        // JWT 토큰 발급
+        String token = jwtTokenProvider.generateToken(member.getUser_id());
+        return ResponseEntity.ok(token);
     }
+
+    /**
+     * 로그인 및 토큰 발급
+     * @param loginDTO 요청 바디로 전달된 로그인 데이터
+     * @return JWT 토큰
+     */
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO) {
+
+        Optional<Member> memberOptional = memberRepository.findById(loginDTO.getUserId());
+
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            if (passwordEncoder.matches(loginDTO.getPassword(), member.getPassword())) {
+                // 비밀번호가 일치하면 토큰 발급
+                String token = jwtTokenProvider.generateToken(member.getUser_id());
+                return ResponseEntity.ok(token);
+            }
+        }
+        return ResponseEntity.status(401).body("Invalid credentials");
+    }
+
 
     /**
      * 회원 조회
