@@ -22,7 +22,7 @@ public class MemberRepositoryTest {
     public void testSaveMember() {
         // 멤버 생성
         Member member = new Member();
-        member.setUser_id("mysqlTestUser");
+        member.setUserId("mysqlTestUser");
         member.setName("MySQL Test User");
         member.setEmail("mysqltestuser@example.com");
         member.setPassword("securepassword");
@@ -40,7 +40,7 @@ public class MemberRepositoryTest {
     public void testFindMemberById() {
         // 데이터 준비
         Member member = new Member();
-        member.setUser_id("mysqlTestUser2");
+        member.setUserId("mysqlTestUser2");
         member.setName("Another MySQL User");
         member.setEmail("anothermysqluser@example.com");
         member.setPassword("securepassword");

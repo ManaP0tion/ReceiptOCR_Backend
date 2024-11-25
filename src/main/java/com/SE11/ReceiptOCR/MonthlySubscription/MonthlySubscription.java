@@ -19,6 +19,6 @@ public class MonthlySubscription {
     private java.time.LocalDate billing_date; // 결제일
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // Member와 연결
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false) // Member의 user_id와 매핑
     private Member member;
 }

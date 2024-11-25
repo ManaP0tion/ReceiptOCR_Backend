@@ -26,7 +26,7 @@ public class MemberController {
     public ResponseEntity<String> register(@RequestBody MemberDTO memberDTO) {
         // DTO -> 엔티티 변환
         Member member = new Member();
-        member.setUser_id(memberDTO.getUserId());
+        member.setUserId(memberDTO.getUserId());
         member.setName(memberDTO.getName());
         member.setEmail(memberDTO.getEmail());
         member.setPassword(passwordEncoder.encode(memberDTO.getPassword())); // 패스워드 해싱
@@ -40,7 +40,7 @@ public class MemberController {
         memberRepository.save(member);
 
         // JWT 토큰 발급
-        String token = jwtTokenProvider.generateToken(member.getUser_id());
+        String token = jwtTokenProvider.generateToken(member.getUserId());
         return ResponseEntity.ok(token);
     }
 
@@ -58,7 +58,7 @@ public class MemberController {
             Member member = memberOptional.get();
             if (passwordEncoder.matches(loginDTO.getPassword(), member.getPassword())) {
                 // 비밀번호가 일치하면 토큰 발급
-                String token = jwtTokenProvider.generateToken(member.getUser_id());
+                String token = jwtTokenProvider.generateToken(member.getUserId());
                 return ResponseEntity.ok(token);
             }
         }
@@ -72,24 +72,41 @@ public class MemberController {
      * @return 회원 정보
      */
     @GetMapping("/{userId}")
-    public ResponseEntity<Member> getMember(@PathVariable String userId) {
+    public ResponseEntity<MemberDTO> getMember(@PathVariable String userId) {
         Optional<Member> member = memberRepository.findById(userId);
+
         if (member.isPresent()) {
-            return ResponseEntity.ok(member.get());
+            Member existingMember = member.get();
+
+            // 엔티티를 DTO로 변환
+            MemberDTO memberDTO = new MemberDTO();
+            memberDTO.setUserId(existingMember.getUserId());
+            memberDTO.setName(existingMember.getName());
+            memberDTO.setEmail(existingMember.getEmail());
+
+            // 비밀번호는 포함하지 않음
+            return ResponseEntity.ok(memberDTO);
         } else {
             return ResponseEntity.status(404).body(null); // 404 NOT FOUND 응답
         }
     }
+
 
     /**
      * 모든 회원 조회 (테스트용)
      * @return 모든 회원 리스트
      */
     @GetMapping("/all")
-    public ResponseEntity<Iterable<Member>> getAllMembers() {
-        return ResponseEntity.ok(memberRepository.findAll());
-    }
+    public ResponseEntity<?> getAllMembers() {
+        Iterable<Member> members = memberRepository.findAll();
 
+        // 회원이 한 명도 없는 경우 메시지 반환
+        if (!members.iterator().hasNext()) {
+            return ResponseEntity.status(404).body("등록된 회원이 없습니다");
+        }
+
+        return ResponseEntity.ok(members);
+    }
     /**
      * 회원 수정
      * @param userId 업데이트할 회원 ID

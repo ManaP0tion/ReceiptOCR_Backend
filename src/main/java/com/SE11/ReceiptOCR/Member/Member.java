@@ -4,6 +4,7 @@ import com.SE11.ReceiptOCR.Expense.Expense;
 import com.SE11.ReceiptOCR.Income.Income;
 import com.SE11.ReceiptOCR.MonthlySubscription.MonthlySubscription;
 import com.SE11.ReceiptOCR.Receipt.Receipt;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -17,7 +18,8 @@ import java.util.List;
 @Setter
 public class Member {
     @Id
-    private String user_id;     // PK
+    @Column(name = "user_id")
+    private String userId;     // PK
 
     private String name;
     private String email;
