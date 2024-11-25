@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
@@ -53,7 +52,7 @@ public class ReceiptController {
                 receipt.getStoreName(),
                 receipt.getTotalAmount(),
                 receipt.getDate(),
-                receipt.getMember().getUser_id() // 수정: getUserId() -> getUser_id()
+                receipt.getMember().getUserId() // 수정: getUserId() -> getUser_id()
         );
         return ResponseEntity.ok(receiptDTO);
     }
@@ -67,7 +66,7 @@ public class ReceiptController {
                         receipt.getStoreName(),
                         receipt.getTotalAmount(),
                         receipt.getDate(),
-                        receipt.getMember().getUser_id() // 수정: getUserId() -> getUser_id()
+                        receipt.getMember().getUserId() // 수정: getUserId() -> getUser_id()
                 ))
                 .collect(Collectors.toList());
 
