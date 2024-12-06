@@ -31,4 +31,14 @@ public class Receipt {
     @ManyToOne // Member와 연관 관계 설정
     @JoinColumn(name = "user_id", nullable = false) // 외래 키
     private Member member; // 유저 엔티티와의 관계
+
+    public Receipt() {} // 기본 생성자
+
+    public Receipt(ReceiptDTO dto) {
+        this.receiptId = dto.getReceiptId();
+        this.storeName = dto.getStoreName();
+        this.totalAmount = dto.getTotalAmount();
+        this.date = dto.getDate();
+        this.imageUrl = dto.getImageUrl();
+    }
 }

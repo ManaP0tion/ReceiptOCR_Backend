@@ -28,4 +28,12 @@ public class Expense {
     @ManyToOne
     @JoinColumn(name = "receipt_id", nullable = true)
     private Receipt receipt;
+
+    // ExpenseDTO를 받아 Expense 객체를 초기화하는 메서드
+    public void initFromDTO(ExpenseDTO dto) {
+        this.price = dto.getPrice();
+        this.category = dto.getCategory();
+        this.description = dto.getDescription();
+        this.date = dto.getDate();
+    }
 }

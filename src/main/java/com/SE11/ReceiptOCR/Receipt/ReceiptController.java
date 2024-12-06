@@ -52,7 +52,8 @@ public class ReceiptController {
                 receipt.getStoreName(),
                 receipt.getTotalAmount(),
                 receipt.getDate(),
-                receipt.getMember().getUserId() // 수정: getUserId() -> getUser_id()
+                receipt.getMember().getUserId(), // 수정: getUserId() -> getUser_id()
+                receipt.getImageUrl()
         );
         return ResponseEntity.ok(receiptDTO);
     }
@@ -66,7 +67,8 @@ public class ReceiptController {
                         receipt.getStoreName(),
                         receipt.getTotalAmount(),
                         receipt.getDate(),
-                        receipt.getMember().getUserId() // 수정: getUserId() -> getUser_id()
+                        receipt.getMember().getUserId(), // 수정: getUserId() -> getUser_id()
+                        receipt.getImageUrl()
                 ))
                 .collect(Collectors.toList());
 

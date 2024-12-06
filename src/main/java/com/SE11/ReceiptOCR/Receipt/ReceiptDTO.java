@@ -8,17 +8,19 @@ public class ReceiptDTO {
     private int totalAmount;  // 물품 수량
     private LocalDate date;   // 날짜
     private String userId;    // 유저 ID
+    private String imageUrl;
 
     // 기본 생성자
     public ReceiptDTO() {}
 
     // 매개변수를 받는 생성자
-    public ReceiptDTO(String receiptId, String storeName, int totalAmount, LocalDate date, String userId) {
+    public ReceiptDTO(String receiptId, String storeName, int totalAmount, LocalDate date, String userId, String imageUrl) {
         this.receiptId = receiptId;
         this.storeName = storeName;
         this.totalAmount = totalAmount;
         this.date = date;
         this.userId = userId;
+        this.imageUrl = imageUrl;
     }
 
     // Getter 메소드
@@ -42,6 +44,10 @@ public class ReceiptDTO {
         return userId;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
     // Setter 메소드
     public void setReceiptId(String receiptId) {
         this.receiptId = receiptId;
@@ -61,5 +67,9 @@ public class ReceiptDTO {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
