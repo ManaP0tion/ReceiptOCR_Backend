@@ -55,8 +55,7 @@ import lombok.AllArgsConstructor;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class OCRDTO {
     private ReceiptDTO receiptDTO;
     private ExpenseDTO expenseDTO;
