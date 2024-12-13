@@ -26,13 +26,7 @@ public class Member {
     private String password;
 
     @OneToMany(mappedBy = "member")
-    private List<Expense> expenses;
-
-    @OneToMany(mappedBy = "member")
     private List<Receipt> receipts;
-
-    @OneToMany(mappedBy = "member")
-    private List<MonthlySubscription> subscriptions;
 
     @OneToMany(mappedBy = "member")
     private List<Income> incomes;

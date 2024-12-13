@@ -1,10 +1,9 @@
 package com.SE11.ReceiptOCR.Expense;
 
-import com.SE11.ReceiptOCR.Member.Member;
-import com.SE11.ReceiptOCR.Receipt.Receipt;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,21 +21,11 @@ public class ExpenseController {
     @PostMapping
     public ResponseEntity<ExpenseDTO> createExpense(@RequestBody ExpenseDTO expenseDTO) {
         Expense expense = new Expense();
-        expense.setExpense_id(expenseDTO.getExpense_id());
+        expense.setExpenseId(expenseDTO.getExpense_id());
         expense.setPrice(expenseDTO.getPrice());
-        expense.setCategory(expenseDTO.getCategory());
         expense.setDescription(expenseDTO.getDescription());
         expense.setDate(expenseDTO.getDate());
-
-        Member member = new Member();
-        member.setUserId(expenseDTO.getUser_id());
-        expense.setMember(member);
-
-        if (expenseDTO.getReceipt_id() != null) {
-            Receipt receipt = new Receipt();
-            receipt.setReceiptId(expenseDTO.getReceipt_id());
-            expense.setReceipt(receipt);
-        }
+        expense.setUserId(expenseDTO.getUserId()); // userId 직접 설정
 
         Expense savedExpense = expenseRepository.save(expense);
         return ResponseEntity.ok(mapToDTO(savedExpense));
@@ -45,17 +34,27 @@ public class ExpenseController {
     // 2. 특정 유저의 지출 목록 조회(Read)
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ExpenseDTO>> getExpensesByUser(@PathVariable String userId) {
-        List<Expense> expenses = expenseRepository.findByMemberUserId(userId);
+        List<Expense> expenses = expenseRepository.findByUserId(userId);
         List<ExpenseDTO> expenseDTOs = expenses.stream().map(this::mapToDTO).collect(Collectors.toList());
         return ResponseEntity.ok(expenseDTOs);
     }
 
-    // 3. 특정 지출 ID로 조회(Read)
-    @GetMapping("/{id}")
-    public ResponseEntity<ExpenseDTO> getExpenseById(@PathVariable int id) {
-        Expense expense = expenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Expense not found with id: " + id));
-        return ResponseEntity.ok(mapToDTO(expense));
+    // 3. 특정 기간 동안의 지출 조회(Read)
+    @GetMapping("/user/{userId}/range")
+    public ResponseEntity<List<ExpenseDTO>> getExpensesByDateRange(
+            @PathVariable String userId,
+            @RequestParam("startDate") String startDateStr,
+            @RequestParam("endDate") String endDateStr) {
+        // 문자열 날짜 -> LocalDate 변환
+        LocalDate startDate = LocalDate.parse(startDateStr);
+        LocalDate endDate = LocalDate.parse(endDateStr);
+
+        // 리포지토리 호출
+        List<Expense> expenses = expenseRepository.findByUserIdAndDateRange(userId, startDate, endDate);
+
+        // DTO 변환
+        List<ExpenseDTO> expenseDTOs = expenses.stream().map(this::mapToDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(expenseDTOs);
     }
 
     // 4. 지출 정보 수정(Update)
@@ -65,17 +64,8 @@ public class ExpenseController {
                 .orElseThrow(() -> new RuntimeException("Expense not found with id: " + id));
 
         existingExpense.setPrice(expenseDTO.getPrice());
-        existingExpense.setCategory(expenseDTO.getCategory());
         existingExpense.setDescription(expenseDTO.getDescription());
         existingExpense.setDate(expenseDTO.getDate());
-
-        if (expenseDTO.getReceipt_id() != null) {
-            Receipt receipt = new Receipt();
-            receipt.setReceiptId(expenseDTO.getReceipt_id());
-            existingExpense.setReceipt(receipt);
-        } else {
-            existingExpense.setReceipt(null);
-        }
 
         Expense updatedExpense = expenseRepository.save(existingExpense);
         return ResponseEntity.ok(mapToDTO(updatedExpense));
@@ -91,15 +81,11 @@ public class ExpenseController {
     // DTO 매핑 함수
     private ExpenseDTO mapToDTO(Expense expense) {
         ExpenseDTO dto = new ExpenseDTO();
-        dto.setExpense_id(expense.getExpense_id());
+        dto.setExpense_id(expense.getExpenseId());
         dto.setPrice(expense.getPrice());
-        dto.setCategory(expense.getCategory());
         dto.setDescription(expense.getDescription());
         dto.setDate(expense.getDate());
-        dto.setUser_id(expense.getMember().getUserId());
-        if (expense.getReceipt() != null) {
-            dto.setReceipt_id(expense.getReceipt().getReceiptId());
-        }
+        dto.setUserId(expense.getUserId()); // userId 직접 매핑
         return dto;
     }
 }

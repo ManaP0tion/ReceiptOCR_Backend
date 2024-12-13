@@ -7,6 +7,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import lombok.Getter;
 import lombok.Setter;
+import java.time.LocalDate;
 
 @Entity
 @Setter
@@ -17,7 +18,7 @@ public class Income {
 
     private int price;          // 금액
     private String source;      // 출처
-    private java.time.LocalDate date; // 날짜
+    private LocalDate date; // 날짜
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false) // Member와 연결

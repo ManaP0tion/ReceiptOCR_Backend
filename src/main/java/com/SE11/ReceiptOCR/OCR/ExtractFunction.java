@@ -166,7 +166,6 @@ public class ExtractFunction {
             
             // ExpenseDTO 설정
             expenseDTO.setPrice(Integer.parseInt(price.replaceAll("[^0-9]", "")));
-            expenseDTO.setCategory("기타"); // 카테고리는 별도로 처리해야 할 수 있습니다
             expenseDTO.setDescription(String.join(", ", item_name));
             expenseDTO.setDate(date);
             

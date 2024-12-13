@@ -8,30 +8,23 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class MonthlySubscriptionDTO {
-    private int subscription_id;          // 구독 ID (응답에만 사용)
+    private int subscription_id;          // 구독 ID
     private String subscription_item;     // 구독 항목
-    private double price;                 // 금액
-    private String category;              // 카테고리
-    private LocalDate billing_date;       // 결제일
+    private int price;                    // 금액
+    private LocalDate billing_date;       // 첫 결제일
+    private LocalDate start_date;         // 구독 시작일
+    private LocalDate end_date;           // 구독 종료일
+    private String user_id;               // 유저 ID (클라이언트로부터 전달받음)
 
-    // 전체 필드를 포함한 DTO 생성자
-    public MonthlySubscriptionDTO(int subscription_id, String subscription_item, double price, String category, LocalDate billing_date) {
+    public MonthlySubscriptionDTO() {}
+
+    public MonthlySubscriptionDTO(int subscription_id, String subscription_item, int price, LocalDate billing_date, LocalDate start_date, LocalDate end_date, String user_id) {
         this.subscription_id = subscription_id;
         this.subscription_item = subscription_item;
         this.price = price;
-        this.category = category;
         this.billing_date = billing_date;
-    }
-
-    // 생성 시 ID 제외 (클라이언트 요청용)
-    public MonthlySubscriptionDTO(String subscription_item, double price, String category, LocalDate billing_date) {
-        this.subscription_item = subscription_item;
-        this.price = price;
-        this.category = category;
-        this.billing_date = billing_date;
-    }
-
-    // 빈 생성자 (필요 시 사용)
-    public MonthlySubscriptionDTO() {
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.user_id = user_id;
     }
 }
