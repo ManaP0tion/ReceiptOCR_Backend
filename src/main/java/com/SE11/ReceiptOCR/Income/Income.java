@@ -1,12 +1,13 @@
 package com.SE11.ReceiptOCR.Income;
 
-import com.SE11.ReceiptOCR.Member.Member;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.time.LocalDate;
 
 @Entity
@@ -14,13 +15,13 @@ import java.time.LocalDate;
 @Getter
 public class Income {
     @Id
-    private int income_id; // 수익 ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int incomeId; // 수익 ID
 
     private int price;          // 금액
     private String source;      // 출처
-    private LocalDate date; // 날짜
+    private LocalDate date;     // 날짜
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // Member와 연결
-    private Member member;
+    @Column(name = "user_id", nullable = false)
+    private String userId;      // 사용자 ID
 }

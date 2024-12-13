@@ -28,7 +28,4 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Receipt> receipts;
 
-    @OneToMany(mappedBy = "member")
-    private List<Income> incomes;
-
 }

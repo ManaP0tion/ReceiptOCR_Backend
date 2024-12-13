@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class IncomeDTO {
-    private int income_id;   // 수익 ID
+    private int incomeId;   // 수익 ID
     private int price;       // 금액
     private String source;   // 출처
     private LocalDate date;  // 날짜

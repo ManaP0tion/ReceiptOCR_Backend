@@ -1,9 +1,9 @@
 package com.SE11.ReceiptOCR.Income;
 
-import com.SE11.ReceiptOCR.Member.Member;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,24 +21,19 @@ public class IncomeController {
     @PostMapping
     public ResponseEntity<IncomeDTO> createIncome(@RequestBody IncomeDTO incomeDTO) {
         Income income = new Income();
-        income.setIncome_id(incomeDTO.getIncome_id());
         income.setPrice(incomeDTO.getPrice());
         income.setSource(incomeDTO.getSource());
         income.setDate(incomeDTO.getDate());
-
-        Member member = new Member();
-        member.setUserId(incomeDTO.getUser_id());
-        income.setMember(member);
+        income.setUserId(incomeDTO.getUser_id());
 
         Income savedIncome = incomeRepository.save(income);
-        IncomeDTO responseDTO = mapToDTO(savedIncome);
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.ok(mapToDTO(savedIncome));
     }
 
     // 2. 특정 유저의 수익 목록 조회(Read)
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<IncomeDTO>> getIncomesByUser(@PathVariable String userId) {
-        List<Income> incomes = incomeRepository.findByMemberUserId(userId);
+        List<Income> incomes = incomeRepository.findByUserId(userId);
         List<IncomeDTO> incomeDTOs = incomes.stream().map(this::mapToDTO).collect(Collectors.toList());
         return ResponseEntity.ok(incomeDTOs);
     }
@@ -51,7 +46,18 @@ public class IncomeController {
         return ResponseEntity.ok(mapToDTO(income));
     }
 
-    // 4. 수익 정보 수정(Update)
+    // 4. 기간별 수익 조회(Read)
+    @GetMapping("/user/{userId}/range")
+    public ResponseEntity<List<IncomeDTO>> getIncomesByDateRange(
+            @PathVariable String userId,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate) {
+        List<Income> incomes = incomeRepository.findByUserIdAndDateBetween(userId, startDate, endDate);
+        List<IncomeDTO> incomeDTOs = incomes.stream().map(this::mapToDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(incomeDTOs);
+    }
+
+    // 5. 수익 정보 수정(Update)
     @PutMapping("/{id}")
     public ResponseEntity<IncomeDTO> updateIncome(@PathVariable int id, @RequestBody IncomeDTO incomeDTO) {
         Income existingIncome = incomeRepository.findById(id)
@@ -60,12 +66,13 @@ public class IncomeController {
         existingIncome.setPrice(incomeDTO.getPrice());
         existingIncome.setSource(incomeDTO.getSource());
         existingIncome.setDate(incomeDTO.getDate());
+        existingIncome.setUserId(incomeDTO.getUser_id());
 
         Income updatedIncome = incomeRepository.save(existingIncome);
         return ResponseEntity.ok(mapToDTO(updatedIncome));
     }
 
-    // 5. 수익 삭제(Delete)
+    // 6. 수익 삭제(Delete)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteIncome(@PathVariable int id) {
         incomeRepository.deleteById(id);
@@ -75,11 +82,11 @@ public class IncomeController {
     // DTO 매핑 함수
     private IncomeDTO mapToDTO(Income income) {
         IncomeDTO dto = new IncomeDTO();
-        dto.setIncome_id(income.getIncome_id());
+        dto.setIncomeId(income.getIncomeId());
         dto.setPrice(income.getPrice());
         dto.setSource(income.getSource());
         dto.setDate(income.getDate());
-        dto.setUser_id(income.getMember().getUserId());
+        dto.setUser_id(income.getUserId());
         return dto;
     }
 }
