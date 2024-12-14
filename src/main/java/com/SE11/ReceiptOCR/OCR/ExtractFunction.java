@@ -105,6 +105,7 @@ public class ExtractFunction {
 
         result.put("category", "CU");
         result.put("description", String.join(", ", items));
+        printResultMap(result); // 결과 출력
 
         return result;
     }
@@ -155,5 +156,12 @@ public class ExtractFunction {
 
         // 문자열을 LocalDate로 파싱합니다.
         return LocalDate.parse(cleanedDate, formatter);
+    }
+
+    public void printResultMap(Map<String, Object> result) {
+        System.out.println("Extracted Data:");
+        for (Map.Entry<String, Object> entry : result.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
     }
 }

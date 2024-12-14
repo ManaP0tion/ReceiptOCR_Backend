@@ -47,12 +47,36 @@ public class OCRController {
         this.expenseRepository = expenseRepository;
     }
 
+    public static class ImageRequest {
+        private String base64Image;
+        private String user;
+
+        // 기본 생성자 추가
+        public ImageRequest() {
+        }
+
+        public String getBase64Image() {
+            return base64Image;
+        }
+        public String getUser() {
+            return user;
+        }
+
+        public void setBase64Image(String base64Image) {
+            this.base64Image = base64Image;
+        }
+        public void setUser(String user) {
+            this.user = user;
+        }
+    }
+
     @PostMapping("/process")
-    public ResponseEntity<String> processOCR(@RequestParam("base64Image") String base64Image,
-                                             @RequestParam("userId") String userId) {
+    public ResponseEntity<String> processOCR(@RequestBody ImageRequest imageRequest) {
         try {
+            String base64Image = imageRequest.getBase64Image();
+            String user = imageRequest.getUser();
             //로컬에 이미지 파일로 저장
-            String filePath = saveImage(base64Image, userId);
+            String filePath = saveImage(base64Image, user);
 
             // OCR 처리
             ocrFunction.processOCR(filePath);
@@ -65,8 +89,8 @@ public class OCRController {
             Map<String, Object> ocrResult = extractFunction.extractData(jsonFilePath);
 
             // OCR 결과를 ReceiptDTO, ExpenseDTO로 변환
-            ReceiptDTO receiptDTO = mapOCRResultToReceiptDTO(ocrResult, userId, filePath);
-            ExpenseDTO expenseDTO = mapOCRResultToExpenseDTO(ocrResult, userId);
+            ReceiptDTO receiptDTO = mapOCRResultToReceiptDTO(ocrResult, user, filePath);
+            ExpenseDTO expenseDTO = mapOCRResultToExpenseDTO(ocrResult, user);
 
             // Receipt, Expense 저장
             saveReceipt(receiptDTO);
