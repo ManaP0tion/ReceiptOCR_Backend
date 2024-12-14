@@ -19,8 +19,7 @@ public class ExpenseDTO {
     public ExpenseDTO() {}
 
     //영수증 인자 받아서 생성
-    public ExpenseDTO(int expense_id, int price, String description, LocalDate date, String user_id) {
-        this.expense_id = expense_id;
+    public ExpenseDTO(int price, String description, LocalDate date, String user_id) {
         this.price = price;
         this.description = description;
         this.date = date;
