@@ -14,4 +14,16 @@ public class ExpenseDTO {
     private LocalDate date;       // 날짜
     private String userId;       // 사용자 ID
     private Integer subscription_id;
+
+    //기본 생성자
+    public ExpenseDTO() {}
+
+    //영수증 인자 받아서 생성
+    public ExpenseDTO(int expense_id, int price, String description, LocalDate date, String user_id) {
+        this.expense_id = expense_id;
+        this.price = price;
+        this.description = description;
+        this.date = date;
+        this.userId = user_id;
+    }
 }
