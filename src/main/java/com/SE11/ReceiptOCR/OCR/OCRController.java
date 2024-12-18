@@ -175,7 +175,6 @@ public class OCRController {
 
         // ExpenseDTO 생성
         return new ExpenseDTO(
-                0, // expense_id는 자동 생성?
                 price,
                 //category,
                 description,
@@ -187,8 +186,8 @@ public class OCRController {
 
     private void saveExpense(ExpenseDTO expenseDTO) {
         // Member 조회
-        Member member = memberRepository.findById(expenseDTO.getUserId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with ID: " + expenseDTO.getUserId()));
+//        Member member = memberRepository.findById(expenseDTO.getUserId())
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with ID: " + expenseDTO.getUserId()));
 
         // Receipt 조회 (옵션)
 //        Receipt receipt = null;
@@ -203,7 +202,7 @@ public class OCRController {
         //expense.setCategory(expenseDTO.getCategory());
         expense.setDescription(expenseDTO.getDescription());
         expense.setDate(expenseDTO.getDate());
-        //UserId 어디에 저장?
+        expense.setUserId(expenseDTO.getUserId());
 //        expense.setMember(member);
 //        expense.setReceipt(receipt);
 

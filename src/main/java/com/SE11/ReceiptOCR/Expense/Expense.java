@@ -13,6 +13,7 @@ import java.time.LocalDate;
 public class Expense {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "expense_id")
     private int expenseId;
 
     private int price;
